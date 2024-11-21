@@ -1,10 +1,12 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for
 import re
 
 from task_solver import func_rect
 
 app = Flask(__name__)
 
+
+# Обработка формулы
 def process_formula(formula):
     # Убираем пробелы вокруг `**`
     formula = re.sub(r'\s*\*\*\s*', '**', formula)
@@ -25,20 +27,46 @@ def process_formula(formula):
 
     return formula
 
+
+# Главная страница с формой
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
+# Обработка формы и перенаправление
 @app.route('/process', methods=['POST'])
 def process():
-    data = request.get_json()
-    formula = data.get('formula', '')
-    a = data.get('a', 0)
-    b = data.get('b', 0)
-    n = data.get('n', 0)
+    # Получение данных из формы
+    formula = request.form.get('formula', '')
+    a = request.form.get('a', 0, type=float)
+    b = request.form.get('b', 0, type=float)
+    n = request.form.get('n', 0, type=int)
+    way = request.form.get('way', 0, type=int)
+
+    # Обработка формулы
     processed_formula = process_formula(formula)
-    g = func_rect(a, b, n, processed_formula)
-    return render_template('result.html', ans=g)
+
+    # Перенаправление на страницу результатов с передачей данных
+    return redirect(url_for('results', formula=processed_formula, a=a, b=b, n=n, way=way))
+
+
+# Страница результатов
+@app.route('/results')
+def results():
+    formula = request.args.get('formula', '')
+    formula = formula.lower()
+    a = request.args.get('a', 0, type=float)
+    b = request.args.get('b', 0, type=float)
+    n = request.args.get('n', 0, type=int)
+    way = request.args.get('way', 0, type=int)
+
+    # Вычисление интеграла с использованием средней прямоугольной формулы
+    ans = func_rect(a, b, n, formula, way)
+
+    # Отображение результата на странице результатове
+    return render_template('result.html', ans=ans)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

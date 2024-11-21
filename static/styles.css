@@ -29,10 +29,36 @@ button {
   font-size: 16px;
   border: none;
   border-radius: 4px;
-  background-color: #007bff;
+  background-color: #2196f3;
   color: white;
   cursor: pointer;
 }
 button:hover {
   background-color: #0056b3;
 }
+
+a.button {
+  display: inline-block;
+  background: #2196f3;
+  color: #fff;
+  padding: 12px;
+  border-radius: 3px;
+  text-decoration: none;
+  font-family: Tahoma;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 100;
+}
+
+a.button:hover {
+  background-color: #0056b3;
+}
+
+.box {
+      width: 120px;
+      height: 30px;
+      border: 1px solid #999;
+      background-color: #eee;
+      border-radius: 5px;
+      box-shadow: 4px 4px #ccc;
+      }

@@ -1,32 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Математический ввод</title>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <link rel="stylesheet" href="static/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математический ввод</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="stylesheet" href="static/styles.css">
 </head>
 <body>
-  <div class="container">
+<div class="container">
     <h1>Математический ввод</h1>
-    <label for="aInput">Введите число a:</label>
-    <input type="number" id="aInput" placeholder="Введите a">
+    <form method="POST" action="/process">
+        <label for="aInput">Введите число a:</label>
+        <input type="number" step="any" id="aInput" name="a" placeholder="Введите a">
 
-    <label for="bInput">Введите число b:</label>
-    <input type="number" id="bInput" placeholder="Введите b">
+        <label for="bInput">Введите число b:</label>
+        <input type="number" step="any" id="bInput" name="b" placeholder="Введите b">
 
-    <label for="nInput">Введите число n:</label>
-    <input type="number" id="nInput" placeholder="Введите n">
+        <label for="nInput">Введите число n:</label>
+        <input type="number" id="nInput" name="n" placeholder="Введите n">
 
-    <label for="formulaInput">Введите формулу:</label>
-    <input type="text" id="formulaInput" placeholder="Например: x ** 2 + y³">
+        <label for="nInput">Выберите способ решения:</label>
+        <br>
+        <div>
+        <select class="box" required="required" name="way">
+            <option value="0">Прямоугольник</option>
+            <option value="1">Трапеция</option>
+            <option value="2">Парабола</option>
+        </select>
+        </div><br>
+        <label for="formulaInput">Введите формулу:</label>
+        <input type="text" id="formulaInput" name="formula" placeholder="Например: x ** 2 + y³">
+        <div class="formula" id="mathOutput"></div>
+        <button type="submit">Отправить</button>
+    </form>
+</div>
 
-    <div class="formula" id="mathOutput"></div>
-    <a href="/process">Отправить на сервер</a>
-  </div>
-
-  <script>
+<script>
     const formulaInput = document.getElementById('formulaInput');
     const aInput = document.getElementById('aInput');
     const bInput = document.getElementById('bInput');
@@ -36,44 +46,44 @@
 
     // Обрабатываем ввод формулы
     formulaInput.addEventListener('input', () => {
-      let rawFormula = formulaInput.value.trim();
+        let rawFormula = formulaInput.value.trim();
 
-      // Удаляем лишние пробелы вокруг `**`
-      rawFormula = rawFormula.replace(/\s*\*\*\s*/g, '**');
+        // Удаляем лишние пробелы вокруг `**`
+        rawFormula = rawFormula.replace(/\s*\*\*\s*/g, '**');
 
-      // Обрабатываем степени
-      rawFormula = rawFormula.replace(/\*\*([0-9]+)/g, '^{$1}');
-      rawFormula = rawFormula
-        .replace(/²/g, '^{2}')
-        .replace(/³/g, '^{3}')
-        .replace(/⁴/g, '^{4}')
-        .replace(/⁵/g, '^{5}')
-        .replace(/⁶/g, '^{6}')
-        .replace(/⁷/g, '^{7}')
-        .replace(/⁸/g, '^{8}')
-        .replace(/⁹/g, '^{9}');
+        // Обрабатываем степени
+        rawFormula = rawFormula.replace(/\*\*([0-9]+)/g, '^{$1}');
+        rawFormula = rawFormula
+            .replace(/²/g, '^{2}')
+            .replace(/³/g, '^{3}')
+            .replace(/⁴/g, '^{4}')
+            .replace(/⁵/g, '^{5}')
+            .replace(/⁶/g, '^{6}')
+            .replace(/⁷/g, '^{7}')
+            .replace(/⁸/g, '^{8}')
+            .replace(/⁹/g, '^{9}');
 
-      const mathjaxFormula = `\\(${rawFormula}\\)`;
-      output.textContent = mathjaxFormula;
-      MathJax.typesetPromise([output]);
+        const mathjaxFormula = `\\(${rawFormula}\\)`;
+        output.textContent = mathjaxFormula;
+        MathJax.typesetPromise([output]);
     });
 
     // Отправляем данные на сервер
     sendButton.addEventListener('click', async () => {
-      const rawFormula = formulaInput.value.trim();
-      const a = parseFloat(aInput.value) || 0;
-      const b = parseFloat(bInput.value) || 0;
-      const n = parseFloat(nInput.value) || 0;
+        const rawFormula = formulaInput.value.trim();
+        const a = parseFloat(aInput.value) || 0;
+        const b = parseFloat(bInput.value) || 0;
+        const n = parseFloat(nInput.value) || 0;
 
-      const response = await fetch('/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formula: rawFormula, a, b, n }),
-      });
+        const response = await fetch('/process', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({formula: rawFormula, a, b, n}),
+        });
 
-      const result = await response.json();
-      alert(`Результат: ${result.processedFormula}`);
+        const result = await response.json();
+        alert(`Результат: ${result.processedFormula}`);
     });
-  </script>
+</script>
 </body>
 </html>

@@ -9,9 +9,20 @@
 </head>
 <body>
   <div class="container">
-      {% for key, value in ans[0].items() %}
-    <h2>{{ key }}={{ value }}</h2>
+    <h4>h = {{ ans[-1]["h"]}}</h4>
+    <br>
+  </div>
+  <div class="container">
+    {% for el in ans[:-1] %}
+      {% for key, value in el.items() %}
+        <p>{{ key }}  = {{ value }}</p>
+      {% endfor %}
+    <br>
     {% endfor %}
+    <br>
+    <h4>Ответ: {{ ans[-1]["h"]}}</h4>
+    <br>
+    <a href="/" class="button">Вернуться назад</a>
   </div>
 </body>
 </html>
